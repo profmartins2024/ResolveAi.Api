@@ -1,9 +1,10 @@
-﻿using MySqlConnector;
+using MySqlConnector;
 using Microsoft.Extensions.Configuration;
 using ResolveAi.Api.Models;
 
-namespace ResolveAi.Api.Repositories
-{
+namespace ResolveAi.Api.Repositories;
+
+
     public class UsuarioRepository
     {
         private readonly IConfiguration _config;
@@ -107,4 +108,3 @@ namespace ResolveAi.Api.Repositories
             await cmd.ExecuteNonQueryAsync();
         }
     }
-}
