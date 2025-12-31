@@ -1,13 +1,18 @@
-# ================================
+﻿# ================================
 # BUILD
 # ================================
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+# Copia tudo
 COPY . .
 
-RUN dotnet restore ResolveAi.Api/ResolveAi.Api.csproj
-RUN dotnet publish ResolveAi.Api/ResolveAi.Api.csproj -c Release -o /app/out
+# Entra na pasta da API
+WORKDIR /src/CasaResolve.Api
+
+# Restaura e publica
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app/out
 
 # ================================
 # RUNTIME
@@ -17,4 +22,9 @@ WORKDIR /app
 
 COPY --from=build /app/out .
 
-ENTRYPOINT ["dotnet", "ResolveAi.Api.dll"]
+# 🚫 NÃO definir ASPNETCORE_URLS
+# 🚫 NÃO definir PORT
+# Railway injeta tudo automaticamente
+
+ENTRYPOINT ["dotnet", "CasaResolve.Api.dll"]
+
