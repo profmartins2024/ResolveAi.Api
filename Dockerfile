@@ -8,7 +8,7 @@ WORKDIR /src
 COPY . .
 
 # Entra na pasta da API
-WORKDIR /src/CasaResolve.Api
+WORKDIR /src/ResolveAi.Api
 
 # Restaura e publica
 RUN dotnet restore
@@ -26,5 +26,6 @@ COPY --from=build /app/out .
 # 🚫 NÃO definir PORT
 # Railway injeta tudo automaticamente
 
-ENTRYPOINT ["dotnet", "CasaResolve.Api.dll"]
+ENTRYPOINT ["dotnet", "ResolveAi.Api.dll"]
+
 
