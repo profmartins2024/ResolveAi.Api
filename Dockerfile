@@ -2,11 +2,12 @@
 # BUILD
 # ================================
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
 COPY . .
-RUN dotnet restore ResolveAi.Api.csproj
-RUN dotnet publish ResolveAi.Api.csproj -c Release -o /app/out
+
+RUN dotnet restore ResolveAi.Api/ResolveAi.Api.csproj
+RUN dotnet publish ResolveAi.Api/ResolveAi.Api.csproj -c Release -o /app/out
 
 # ================================
 # RUNTIME
