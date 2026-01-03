@@ -83,9 +83,12 @@ namespace ResolveAi.Api.Controllers
             // ===============================
             return Ok(new
             {
-                usuarioId = usuario.Id,     // 🔥 ID do banco
-                nome = usuario.Nome,        // 🔥 coluna "nome" do banco
-                email = usuario.Email       // 🔥 email usado no login
+                sucesso = true,
+                statusCode = 200,
+                mensagem = "Login realizado com sucesso.",
+                usuarioId = usuario.Id.ToString(),
+                nome = usuario.Nome,
+                email = usuario.Email
             });
 
         }
