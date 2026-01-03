@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using ResolveAi.Api.Repositories;
 using System.Globalization;
 using System.Text;
@@ -83,9 +83,11 @@ namespace ResolveAi.Api.Controllers
             // ===============================
             return Ok(new
             {
-                message = "Login realizado com sucesso.",
-                nome = usuario.Nome
+                usuarioId = usuario.Id,     // 🔥 ID do banco
+                nome = usuario.Nome,        // 🔥 coluna "nome" do banco
+                email = usuario.Email       // 🔥 email usado no login
             });
+
         }
     }
 
