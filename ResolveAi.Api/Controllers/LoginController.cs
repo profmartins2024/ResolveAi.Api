@@ -7,6 +7,7 @@ namespace ResolveAi.Api.Controllers
 {
     [ApiController]
     [Route("api/login")]
+    [Produces("application/json")]
     public class LoginController : ControllerBase
     {
         private readonly UsuarioRepository _usuarioRepo;
@@ -31,7 +32,7 @@ namespace ResolveAi.Api.Controllers
                 .ToLowerInvariant()
                 .Normalize(NormalizationForm.FormD);
 
-            var sb = new StringBuilder();
+            var sb = new StringBuilder(normalized.Length);
 
             foreach (var c in normalized)
             {
@@ -46,6 +47,9 @@ namespace ResolveAi.Api.Controllers
         // LOGIN
         // =====================================================
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             if (request == null ||
@@ -57,40 +61,46 @@ namespace ResolveAi.Api.Controllers
             }
 
             // ===============================
-            // 1️⃣ BUSCA USUÁRIO
+            // 1️⃣ BUSCAR USUÁRIO PELO EMAIL
             // ===============================
-            var usuario = await _usuarioRepo.BuscarPorEmailAsync(request.Email);
+            var usuario = await _usuarioRepo.BuscarPorEmailAsync(request.Email.Trim());
 
             if (usuario == null)
                 return Unauthorized("E-mail incorreto.");
 
             // ===============================
-            // 2️⃣ VERIFICA SENHA
+            // 2️⃣ VERIFICAR SENHA
             // ===============================
             if (!BCrypt.Net.BCrypt.Verify(request.Senha, usuario.Senha))
                 return Unauthorized("Senha incorreta.");
 
             // ===============================
-            // 3️⃣ VERIFICA PALAVRA DE SEGURANÇA
+            // 3️⃣ VERIFICAR PALAVRA DE SEGURANÇA
             // ===============================
-            var palavraNormalizada = NormalizarSeguranca(request.PalavraSeguranca);
+            var palavraNormalizada =
+                NormalizarSeguranca(request.PalavraSeguranca);
 
-            if (!BCrypt.Net.BCrypt.Verify(palavraNormalizada, usuario.PalavraSeguranca))
+            if (!BCrypt.Net.BCrypt.Verify(
+                    palavraNormalizada,
+                    usuario.PalavraSeguranca))
+            {
                 return Unauthorized("Palavra de segurança incorreta.");
+            }
 
             // ===============================
-            // SUCESSO
+            // 4️⃣ SUCESSO (CONTRATO FINAL)
             // ===============================
             return Ok(new
             {
                 sucesso = true,
-                statusCode = 200,
+                statusCode = StatusCodes.Status200OK,
                 mensagem = "Login realizado com sucesso.",
-                usuarioId = usuario.Id.ToString(),
-                nome = usuario.Nome,
-                email = usuario.Email
-            });
 
+                // 🔥 DADOS VINDOS DO BANCO
+                usuarioId = usuario.Id.ToString(),
+                nome = usuario.Nome,     // coluna "nome"
+                email = usuario.Email    // coluna "email"
+            });
         }
     }
 
